@@ -1,5 +1,5 @@
 import datetime as dt
-import json
+import json as jsn
 
 print("Welcome to the Expense Tracker 😊")
 
@@ -177,12 +177,12 @@ class ExpenseTracker:
     def save_to_file(self):
         with open(r"D:\Python\JSONS\expense.json", "w") as expense_data:
             exp_dict = [expense.to_dict() for expense in self.expenses]
-            json.dump(exp_dict, expense_data) # params: json.dump("dict/list", "file_obj")
+            jsn.dump(exp_dict, expense_data) # params: json.dump("dict/list", "file_obj")
         print("Expenses have been Saved ✅")
 
     def load_from_file(self):
         with open(r"D:\Python\JSONS\expense.json", "r") as rtrn_exp_data:
-            returned_data = json.load(rtrn_exp_data)
+            returned_data = jsn.load(rtrn_exp_data)
 
         for data in returned_data: # convert the dict into expense obj one-by-one and add them in the list
             exp_obj = Expense.from_dict(data)
