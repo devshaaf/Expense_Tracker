@@ -154,7 +154,7 @@ The project is organized using Django’s **MTV (Model-Template-View)** architec
 ### Project Directory Layout
 The structure of your project is clean and well-organized:
 
-```Expense_Tracker/
+Expense_Tracker/ ```
 │
 ├── Expense_Tracker/          # Main project folder (settings, URLs, WSGI/ASGI)
 │
@@ -166,7 +166,8 @@ The structure of your project is clean and well-organized:
 │   └── static/               # CSS and JS files
 │
 ├── db.sqlite3                # The default database file
-└── manage.py                 # Django project manager ```
+└── manage.py                 # Django project manager```
+
 ---
 
 ## Future Improvements
