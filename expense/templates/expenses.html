@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}All Expenses{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css\expenses.css' %}">
+
+{% endblock %}  
+
+
+
+{% block content %}    
+
+<div class="container">        
+
+    {% if request.user.is_authenticated %}
+
+    <div class="header-section">            
+
+        <h1 class="greeting">Hello, {{request.user.first_name}}! 👋</h1>
+        <div class="user-actions">
+            <a href="{% url 'logout' %}" class="logout-btn">LogOut</a>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="header-section">
+
+        <h1 class="greeting">Hello, User! 👋</h1>
+
+    </div>
+
+    {% endif %}
+
+   
+
+    <div class="button-group">            
+
+        <button id="show-category-btn" class="btn-primary">Show by Category</button>            
+
+        <a href="{% url 'total' %}" class="btn-secondary">Total Spend</a>        
+
+    </div>        
+
+   
+
+    <!-- Category Filter Dropdown (Hidden by default) -->
+
+    <div id="category-filter" class="category-filter" style="display: none;">
+
+        <select id="category-select">
+
+            <option value="">All Categories</option>
+
+            <!-- Categories will be populated by JavaScript -->
+
+        </select>
+
+    </div>
+
+   
+
+    <h2 id="section-title" class="section-title">All Expenses</h2>        
+
+   
+
+    <!-- Loading indicator -->
+
+    <div id="loading" class="loading" style="display: none;">
+
+        <p>Loading expenses...</p>
+
+    </div>
+
+   
+
+    <!-- Expenses container -->
+
+    <ul id="expense-list" class="expense-list">            
+
+        {% for expense in expenses %}            
+
+        <li>                
+
+            <a href="{% url 'details' expense.id %}" class="expense-item-link">                    
+
+                <div class="expense-item">                        
+
+                    <div class="expense-info">                            
+
+                        <span class="expense-amount">${{expense.amount}}</span>                            
+
+                        <span class="expense-category">{{expense.category}}</span>                        
+
+                    </div>                    
+
+                </div>                
+
+            </a>            
+
+        </li>            
+
+        {% empty %}            
+
+        <p class="no-expenses">No expenses added yet.</p>            
+
+        {% endfor %}        
+
+    </ul>    
+
+</div>
+
+
+
+<!-- Floating Add Button -->
+
+<a href="{% url 'add' %}" class="floating-add-btn" title="Add New Expense">
+
+    <span>+</span>
+
+</a>
+
+
+
+<script>
+
+// Wait for page to load
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const showCategoryBtn = document.getElementById('show-category-btn');
+
+    const categoryFilter = document.getElementById('category-filter');
+
+    const categorySelect = document.getElementById('category-select');
+
+    const expenseList = document.getElementById('expense-list');
+
+    const loading = document.getElementById('loading');
+
+    const sectionTitle = document.getElementById('section-title');
+
+   
+
+    let categoriesLoaded = false;
+
+   
+
+    // Show/Hide category dropdown
+
+    showCategoryBtn.addEventListener('click', function(e) {
+
+        e.preventDefault();
+
+       
+
+        if (categoryFilter.style.display === 'none') {
+
+            categoryFilter.style.display = 'block';
+
+            showCategoryBtn.textContent = 'Hide Categories';
+
+           
+
+            // Load categories if not already loaded
+
+            if (!categoriesLoaded) {
+
+                loadCategories();
+
+            }
+
+        } else {
+
+            categoryFilter.style.display = 'none';
+
+            showCategoryBtn.textContent = 'Show by Category';
+
+           
+
+            // Reset to show all expenses and update heading
+
+            filterExpenses('');
+
+        }
+
+    });
+
+   
+
+    // Handle category selection
+
+    categorySelect.addEventListener('change', function() {
+
+        const selectedCategory = this.value;
+
+        filterExpenses(selectedCategory);
+
+    });
+
+   
+
+    // Load available categories
+
+    function loadCategories() {
+
+        fetch('/expense/get_categories/', {
+
+            method: 'GET',
+
+            headers: {
+
+                'X-Requested-With': 'XMLHttpRequest',
+
+            }
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            // Clear existing options (except "All Categories")
+
+            categorySelect.innerHTML = '<option value="">All Categories</option>';
+
+           
+
+            // Add category options
+
+            data.categories.forEach(category => {
+
+                const option = document.createElement('option');
+
+                option.value = category;
+
+                option.textContent = category;
+
+                categorySelect.appendChild(option);
+
+            });
+
+           
+
+            categoriesLoaded = true;
+
+        })
+
+        .catch(error => {
+
+            console.error('Error loading categories:', error);
+
+        });
+
+    }
+
+   
+
+    // Filter expenses by category
+
+    function filterExpenses(category) {
+
+        // Show loading
+
+        loading.style.display = 'block';
+
+        expenseList.style.display = 'none';
+
+       
+
+        // Update heading based on selected category
+
+        updateHeading(category);
+
+       
+
+        // Prepare data for request
+
+        const formData = new FormData();
+
+        formData.append('category', category);
+
+       
+
+        // Get CSRF token
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+       
+
+        fetch('/expense/filter_by_category/', {
+
+            method: 'POST',
+
+            headers: {
+
+                'X-Requested-With': 'XMLHttpRequest',
+
+                'X-CSRFToken': csrfToken,
+
+            },
+
+            body: formData
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            updateExpensesList(data.expenses);
+
+           
+
+            // Hide loading
+
+            loading.style.display = 'none';
+
+            expenseList.style.display = 'flex';
+
+        })
+
+        .catch(error => {
+
+            console.error('Error filtering expenses:', error);
+
+            loading.style.display = 'none';
+
+            expenseList.style.display = 'flex';
+
+        });
+
+    }
+
+   
+
+    // Update heading based on selected category
+
+    function updateHeading(category) {
+
+        if (category && category.trim() !== '') {
+
+            // Capitalize first letter of category for better display
+
+            const capitalizedCategory = category.charAt(0).toUpperCase() + category.slice(1);
+
+            sectionTitle.textContent = `${capitalizedCategory} Expenses`;
+
+        } else {
+
+            sectionTitle.textContent = 'All Expenses';
+
+        }
+
+    }
+
+   
+
+    // Update the expenses list with new data
+
+    function updateExpensesList(expenses) {
+
+        // Clear current list
+
+        expenseList.innerHTML = '';
+
+       
+
+        if (expenses.length === 0) {
+
+            expenseList.innerHTML = '<p class="no-expenses">No expenses found for this category.</p>';
+
+            return;
+
+        }
+
+       
+
+        // Create new expense items
+
+        expenses.forEach(expense => {
+
+            const li = document.createElement('li');
+
+            li.innerHTML = `
+
+                <a href="/expense/expense_detail/${expense.id}" class="expense-item-link">
+
+                    <div class="expense-item">
+
+                        <div class="expense-info">
+
+                            <span class="expense-amount">$${expense.amount}</span>
+
+                            <span class="expense-category">${expense.category}</span>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            `;
+
+            expenseList.appendChild(li);
+
+        });
+
+    }
+
+});
+
+</script>
+
+
+
+<!-- Add CSRF token for AJAX requests -->
+
+{% csrf_token %}
+
+{% endblock %}

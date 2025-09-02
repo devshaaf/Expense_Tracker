@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Expense Tracker{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet", href="{% static 'css\home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="landing-container">
+        <h1 class="fade-in-up">Your Personal Expense Tracker</h1>
+        <p class="fade-in-up delay-1">Take control of your money, one expense at a time. Easily track your spending and see where your money goes.</p>
+        <div class="cta-buttons fade-in-up delay-2">
+            <a href="{% url "login" %}" class="btn btn-primary">Log In</a>
+            <a href="{% url "signup" %}" class="btn btn-secondary">Sign Up</a>
+        </div>
+    </div>
+{% endblock %}

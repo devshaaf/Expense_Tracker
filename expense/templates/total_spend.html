@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Total Spendings{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css\total_spend.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <a href="{% url 'expenses' %}" class="btn-back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to All Expenses
+        </a>
+        <h1>Total Spendings</h1>
+    </div>
+
+    <div class="total-summary-card">
+        <h2 class="summary-title">Overall Total</h2>
+        <p class="overall-total">${{total}}</p>
+    </div>
+
+    <h2 class="section-title">Spending by Category</h2>
+    <ul class="category-list">
+        {% for category_total in categories_total %}
+        <li class="category-item">
+            <span class="category-name">{{category_total.category}}</span>
+            <span class="category-total">${{category_total.total}}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit Expense{% endblock %}
+{% block extra_css %} 
+<link rel="stylesheet", href="{% static 'css\edit_expense.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1>Edit Expense</h1>
+        
+        <form class="expense-form" id="edit-expense-form" method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="amount">Amount:</label>
+                {{form.amount}}
+            </div>
+            
+            <div class="input-group">
+                <label for="category">Category:</label>
+                {{form.category}}
+            </div>
+            
+            <div class="input-group">
+                <label for="description">Description:</label>
+                {{form.description}}
+            </div>
+
+            <div class="expense-timestamps">
+                <small>Created: <span>{{expense.created_at}}</span></small>
+                <small>Updated: <span>{{expense.updated_at}}</span></small>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-update">Update Expense</button>
+                <a href="{% url "details" expense.id %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

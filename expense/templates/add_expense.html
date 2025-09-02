@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Expense{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet", href="{% static 'css\add_expense.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Add Your Expense</h1>
+        
+        <form class="expense-form" method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="{{form.amount.id_for_label}}">Amount:</label>
+                {{form.amount}}
+            </div>
+            
+            <div class="input-group">
+                <label for="{{form.category.id_for_label}}">Category:</label>
+                {{form.category}}
+            </div>
+            
+            <div class="input-group">
+                <label for="{{form.description.id_for_label}}">Description:</label>
+                {{form.description}}
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-update">Add Expense</button>
+                <a href="{% url 'expenses' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+
+        <div class="expense-list-container">
+            <h2>Recent Expenses</h2>
+            {% if recent_exp %}
+            <ul class="expense-list">
+                <li class="expense-item">
+                    <div class="expense-info">
+                        <span class="expense-amount">${{recent_exp.amount}}</span>
+                        <span class="expense-category">{{recent_exp.category}}</span>
+                        <p class="expense-description">{{recent_exp.description}}</p>
+                    </div>
+                    <div class="expense-timestamps">
+                        <small>Created: <span>{{recent_exp.created_at}}</span></small>
+                        <small>Updated: <span>{{recent_exp.updated_at}}</span></small>
+                    </div>
+                </li>
+            </ul>
+            {% else %}
+            <ul class="expense-list">
+                <li class="expense-item">
+                    <div class="expense-info">
+                        <p class="expense-description">No Expenses Added yet!</p>
+                    </div>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Login{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet", href="{% static "css\login.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header-section">
+            <h1 class="greeting">Welcome Back!</h1>
+            <p class="sub-heading">Sign in to your expense tracker</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="username-email">Username</label>
+                <input type="text" id="username-email" name="username" placeholder="john.doe@example.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Sign In</button>
+            {% if error %}
+                <p id = "error">{{error}}</p>
+            {% endif %}
+        </form>
+
+        <div class="form-footer">
+            <p>Don't have an account?</p>
+            <a href="{% url "signup" %}">Create Account</a>
+        </div>
+    </div>
+{% endblock %}
