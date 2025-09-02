@@ -151,10 +151,20 @@ The project is organized using Django’s **MTV (Model-Template-View)** architec
 -   **Static Files**: Contain the CSS and JavaScript assets for styling and dynamic UI behavior.
 -   **URLs**: Route web requests to the appropriate views.
 
+
+---
+## Future Improvements
+
+-   Export expenses to CSV/Excel.
+-   Responsive UI design with a framework like Bootstrap or Tailwind CSS.
+-   Add graphical reports (e.g., charts) for better insights into spending habits.
+-   Implement expense reports.
+
+
 ### Project Directory Layout
 The structure of your project is clean and well-organized:
 
-Expense_Tracker/ ```
+```Expense_Tracker/
 │
 ├── Expense_Tracker/          # Main project folder (settings, URLs, WSGI/ASGI)
 │
@@ -166,13 +176,4 @@ Expense_Tracker/ ```
 │   └── static/               # CSS and JS files
 │
 ├── db.sqlite3                # The default database file
-└── manage.py                 # Django project manager```
-
----
-
-## Future Improvements
-
--   Export expenses to CSV/Excel.
--   Responsive UI design with a framework like Bootstrap or Tailwind CSS.
--   Add graphical reports (e.g., charts) for better insights into spending habits.
--   Implement expense reports.
+└── manage.py                 # Django project manager ```
